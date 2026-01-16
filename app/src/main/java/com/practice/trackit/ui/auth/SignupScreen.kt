@@ -15,15 +15,21 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignupScreen(
+    onSignupSuccess: () -> Unit = {},
     onLoginClick: () -> Unit = {},
-    onSignUpClick: () -> Unit = {}
+    viewModel: AuthViewModel = viewModel()
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var confirmpassword by remember { mutableStateOf("") }
+
+    val loading by viewModel.loading.collectAsState()
+    val error by viewModel.error.collectAsState()
 
     Column(
         modifier = Modifier
@@ -147,8 +153,8 @@ fun SignupScreen(
             )
 
             OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
+                value = confirmpassword,
+                onValueChange = { confirmpassword = it },
                 placeholder = {
                     Text(
                         text = "Re-enter your password",
@@ -170,9 +176,14 @@ fun SignupScreen(
 
         Spacer(modifier = Modifier.height(40.dp))
 
+        error?.let {
+            Spacer(Modifier.height(12.dp))
+            Text(it, color = MaterialTheme.colorScheme.error)
+        }
         // Login Button
         Button(
-            onClick = onLoginClick,
+            onClick = { viewModel.signup(email, password, onSignupSuccess) },
+            enabled = !loading,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
@@ -185,12 +196,19 @@ fun SignupScreen(
                 pressedElevation = 4.dp
             )
         ) {
-            Text(
-                text = "Register",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.White
-            )
+            if (loading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text(
+                    text = "Register",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -206,7 +224,7 @@ fun SignupScreen(
                 color = Color(0xFF6B7280)
             )
             TextButton(
-                onClick = onSignUpClick,
+                onClick = onLoginClick,
                 contentPadding = PaddingValues(0.dp)
             ) {
                 Text(

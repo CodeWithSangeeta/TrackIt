@@ -3,6 +3,7 @@ package com.practice.trackit.ui.auth
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Book
 import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,11 +19,15 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    onLoginClick: () -> Unit = {},
-    onSignUpClick: () -> Unit = {}
+    onLoginSuccess: () -> Unit = {},
+    onSignUpClick: () -> Unit = {},
+    viewModel: AuthViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val loading by viewModel.loading.collectAsState()
+    val error by viewModel.error.collectAsState()
 
     Column(
         modifier = Modifier
@@ -34,7 +39,7 @@ fun LoginScreen(
 
         // Wallet Icon
         Icon(
-            imageVector = Icons.Outlined.ThumbUp,
+            imageVector = Icons.Outlined.Book,
             contentDescription = "Wallet Icon",
             modifier = Modifier.size(64.dp),
             tint = Color(0xFF14B8A6) // Teal color
@@ -47,13 +52,12 @@ fun LoginScreen(
             text = "Welcome Back",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF1F2937),
+          //  color = Color(0xFF1F2937),
             textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Subtitle
         Text(
             text = "Sign in to continue",
             fontSize = 16.sp,
@@ -136,7 +140,8 @@ fun LoginScreen(
 
         // Login Button
         Button(
-            onClick = onLoginClick,
+            onClick = {viewModel.login(email, password,onLoginSuccess)},
+            enabled = !loading,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
@@ -149,12 +154,24 @@ fun LoginScreen(
                 pressedElevation = 4.dp
             )
         ) {
-            Text(
-                text = "Login",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.White
-            )
+            if (loading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text(
+                    text = "Login",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
+        }
+
+        error?.let {
+            Spacer(Modifier.height(12.dp))
+            Text(it, color = MaterialTheme.colorScheme.error)
         }
 
         Spacer(modifier = Modifier.height(24.dp))
