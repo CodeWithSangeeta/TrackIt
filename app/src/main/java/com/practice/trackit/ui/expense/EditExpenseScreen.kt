@@ -22,23 +22,25 @@ import androidx.compose.ui.unit.sp
 import java.text.SimpleDateFormat
 import java.util.*
 
-data class Category(
-    val id: String,
-    val name: String
-)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddExpenseScreen(
+fun EditExpenseScreen(
+    expenseId: Int = 1,
+    initialAmount: String = "2500",
+    initialCategory: String = "Shopping",
+    initialNote: String = "Weekly groceries",
+    initialDate: String = "15-01-2026",
     onBackClick: () -> Unit = {},
-    onSaveClick: (amount: Double, category: String, note: String, date: String) -> Unit = { _, _, _, _ -> }
+    onUpdateClick: (amount: Double, category: String, note: String, date: String) -> Unit = { _, _, _, _ -> },
+    onDeleteClick: (expenseId: Int) -> Unit = {}
 ) {
-    var amount by remember { mutableStateOf("") }
-    var selectedCategory by remember { mutableStateOf<Category?>(null) }
-    var note by remember { mutableStateOf("") }
-    var date by remember { mutableStateOf(SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date())) }
+    var amount by remember { mutableStateOf(initialAmount) }
+    var selectedCategory by remember { mutableStateOf<Category?>(Category("shopping", initialCategory)) }
+    var note by remember { mutableStateOf(initialNote) }
+    var date by remember { mutableStateOf(initialDate) }
     var showCategoryDropdown by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     val categories = listOf(
         Category("food", "Food & Dining"),
@@ -51,8 +53,16 @@ fun AddExpenseScreen(
         Category("other", "Other")
     )
 
+    // Parse the initial date for the date picker
+    val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+    val initialDateMillis = try {
+        dateFormat.parse(initialDate)?.time ?: System.currentTimeMillis()
+    } catch (e: Exception) {
+        System.currentTimeMillis()
+    }
+
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = System.currentTimeMillis()
+        initialSelectedDateMillis = initialDateMillis
     )
 
     Scaffold(
@@ -60,7 +70,7 @@ fun AddExpenseScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Add Expense",
+                        text = "Edit Expense",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF1F2937)
@@ -103,17 +113,9 @@ fun AddExpenseScreen(
                 OutlinedTextField(
                     value = amount,
                     onValueChange = { newValue ->
-                        // Only allow numbers and decimal point
                         if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*$"))) {
                             amount = newValue
                         }
-                    },
-                    placeholder = {
-                        Text(
-                            text = "0.00",
-                            color = Color(0xFFD1D5DB),
-                            fontSize = 18.sp
-                        )
                     },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
@@ -149,12 +151,6 @@ fun AddExpenseScreen(
                         value = selectedCategory?.name ?: "",
                         onValueChange = {},
                         readOnly = true,
-                        placeholder = {
-                            Text(
-                                text = "Select category",
-                                color = Color(0xFF9CA3AF)
-                            )
-                        },
                         trailingIcon = {
                             Icon(
                                 imageVector = Icons.Outlined.KeyboardArrowDown,
@@ -172,7 +168,8 @@ fun AddExpenseScreen(
                             unfocusedContainerColor = Color.White,
                             focusedContainerColor = Color.White
                         ),
-                        singleLine = true
+                        singleLine = true,
+                        textStyle = LocalTextStyle.current.copy(fontSize = 16.sp)
                     )
 
                     ExposedDropdownMenu(
@@ -202,7 +199,7 @@ fun AddExpenseScreen(
             // Note Field
             Column {
                 Text(
-                    text = "Note (Optional)",
+                    text = "Note",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color(0xFF374151),
@@ -212,12 +209,6 @@ fun AddExpenseScreen(
                 OutlinedTextField(
                     value = note,
                     onValueChange = { note = it },
-                    placeholder = {
-                        Text(
-                            text = "Add a note...",
-                            color = Color(0xFFD1D5DB)
-                        )
-                    },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -226,7 +217,8 @@ fun AddExpenseScreen(
                         unfocusedContainerColor = Color.White,
                         focusedContainerColor = Color.White
                     ),
-                    singleLine = true
+                    singleLine = true,
+                    textStyle = LocalTextStyle.current.copy(fontSize = 16.sp)
                 )
             }
 
@@ -266,18 +258,19 @@ fun AddExpenseScreen(
                         disabledTextColor = Color(0xFF374151)
                     ),
                     enabled = false,
-                    singleLine = true
+                    singleLine = true,
+                    textStyle = LocalTextStyle.current.copy(fontSize = 16.sp)
                 )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Save Button
+            // Update Button
             Button(
                 onClick = {
                     val amountValue = amount.toDoubleOrNull() ?: 0.0
                     if (amountValue > 0 && selectedCategory != null) {
-                        onSaveClick(amountValue, selectedCategory!!.name, note, date)
+                        onUpdateClick(amountValue, selectedCategory!!.name, note, date)
                     }
                 },
                 modifier = Modifier
@@ -297,12 +290,37 @@ fun AddExpenseScreen(
                 )
             ) {
                 Text(
-                    text = "Save Expense",
+                    text = "Update Expense",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White
                 )
             }
+
+            // Delete Button
+            OutlinedButton(
+                onClick = { showDeleteDialog = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = Color(0xFFFEF2F2),
+                    contentColor = Color(0xFFDC2626)
+                ),
+                border = ButtonDefaults.outlinedButtonBorder.copy(
+                    brush = androidx.compose.ui.graphics.SolidColor(Color(0xFFFECACA))
+                )
+            ) {
+                Text(
+                    text = "Delete Expense",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFFDC2626)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 
@@ -339,5 +357,62 @@ fun AddExpenseScreen(
             )
         }
     }
+
+    // Delete Confirmation Dialog
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = {
+                Text(
+                    text = "Delete Expense",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = Color(0xFF1F2937)
+                )
+            },
+            text = {
+                Text(
+                    text = "Are you sure you want to delete this expense? This action cannot be undone.",
+                    fontSize = 14.sp,
+                    color = Color(0xFF6B7280)
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteDialog = false
+                        onDeleteClick(expenseId)
+                    },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = Color(0xFFDC2626)
+                    )
+                ) {
+                    Text(
+                        text = "Delete",
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showDeleteDialog = false },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = Color(0xFF6B7280)
+                    )
+                ) {
+                    Text("Cancel")
+                }
+            },
+            containerColor = Color.White,
+            shape = RoundedCornerShape(16.dp)
+        )
+    }
 }
 
+// Preview
+@Composable
+fun EditExpenseScreenPreview() {
+    MaterialTheme {
+        EditExpenseScreen()
+    }
+}
