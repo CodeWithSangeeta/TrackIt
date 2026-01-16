@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import com.practice.trackit.ui.auth.LoginScreen
 import com.practice.trackit.ui.auth.SignupScreen
 import com.practice.trackit.ui.dashboard.DashboardScreen
+import com.practice.trackit.ui.expense.AddExpenseScreen
 
 @Composable
 fun AppNavGraph() {
@@ -54,10 +55,20 @@ fun AppNavGraph() {
 
                 },
                 onAddExpenseClick = {
-                    // later navigate to AddExpense screen
+                    navController.navigate(AppRoutes.ADD_EXPENSE)
                 }
             )
         }
+
+        composable(route = AppRoutes.ADD_EXPENSE) {
+            AddExpenseScreen(
+                onBackClick = { navController.popBackStack() },
+                onSaveSuccess = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
 
     })
 }

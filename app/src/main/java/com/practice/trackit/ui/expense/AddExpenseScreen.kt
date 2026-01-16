@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.practice.trackit.ui.dashboard.DashboardViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -31,7 +32,8 @@ data class Category(
 @Composable
 fun AddExpenseScreen(
     onBackClick: () -> Unit = {},
-    onSaveClick: (amount: Double, category: String, note: String, date: String) -> Unit = { _, _, _, _ -> }
+    onSaveSuccess: () -> Unit = {},
+    viewModel: DashboardViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
 ) {
     var amount by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf<Category?>(null) }
@@ -272,13 +274,20 @@ fun AddExpenseScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            println("Saving expense to Firestore")
+
             // Save Button
             Button(
                 onClick = {
-                    val amountValue = amount.toDoubleOrNull() ?: 0.0
-                    if (amountValue > 0 && selectedCategory != null) {
-                        onSaveClick(amountValue, selectedCategory!!.name, note, date)
-                    }
+                    val amountValue = amount.toDoubleOrNull() ?: return@Button
+                    if (amountValue > 0 && selectedCategory != null)  return@Button
+                        viewModel.addExpense(
+                            amount = amountValue,
+                            category = selectedCategory!!.name,
+                            note = note,
+                            date = date,
+                            onSuccess = onSaveSuccess
+                        )
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -305,6 +314,8 @@ fun AddExpenseScreen(
             }
         }
     }
+    println("Expense saved successfully")
+
 
     // Date Picker Dialog
     if (showDatePicker) {

@@ -2,6 +2,7 @@ package com.practice.trackit.ui.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.practice.trackit.data.model.Expense
 import com.practice.trackit.data.repository.ExpenseRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,4 +26,43 @@ class DashboardViewModel : ViewModel() {
             _loading.value = false
         }
     }
+
+
+    fun addExpense(
+        amount: Double,
+        category: String,
+        note: String,
+        date: String,
+        onSuccess: () -> Unit
+    ) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        val expense = Expense(
+            title = note.ifEmpty { category },
+            category = category,
+            amount = amount,
+            type = "EXPENSE",
+            date = date,
+            userId = userId
+        )
+
+        viewModelScope.launch {
+            _loading.value = true
+            repository.addExpense(expense)
+            loadExpenses()   // refresh dashboard data
+            _loading.value = false
+            onSuccess()
+        }
+    }
+
+
 }
+
+
+
+
+
+
+
+
+

@@ -5,6 +5,7 @@ object AppRoutes {
     const val SIGNUP = "signup"
     const val DASHBOARD = "dashboard"
     const val EDIT = "edit"
-    const val ADD = "add"
+    const val ADD_EXPENSE = "add_expense"
+
 }
 
