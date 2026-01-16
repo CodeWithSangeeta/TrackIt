@@ -2,13 +2,14 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+
+    // Add the Google services Gradle plugin
+    alias(libs.plugins.google.services)
 }
 
 android {
     namespace = "com.practice.trackit"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.practice.trackit"
@@ -50,7 +51,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.play.services.wallet)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -59,6 +59,15 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    // Material icons dependency
     implementation("androidx.compose.material:material-icons-extended")
 
+    // Firebase - Use platform() for BOM
+    implementation(platform(libs.firebase.bom))
+
+    //  Firebase Authentication (Email/Password)
+    implementation(libs.firebase.auth)
+
+    // Firestore Database
+    implementation(libs.firebase.firestore)
 }
