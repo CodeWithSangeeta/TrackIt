@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmptyStateScreen(
+fun EmptyExpenseStateScreen(
     onAddExpenseClick: () -> Unit = {}
 ) {
     Scaffold(
@@ -161,13 +161,5 @@ fun EmptyStateScreen(
                 }
             }
         }
-    }
-}
-
-// Preview
-@Composable
-fun EmptyStateScreenPreview() {
-    MaterialTheme {
-        EmptyStateScreen()
     }
 }

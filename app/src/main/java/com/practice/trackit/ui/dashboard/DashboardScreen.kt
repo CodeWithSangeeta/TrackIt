@@ -11,6 +11,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,7 +22,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.android.gms.wallet.Wallet
+import com.practice.trackit.data.model.Expense
 
 data class Transaction(
     val id: Int,
@@ -38,51 +41,33 @@ enum class TransactionType {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
+    viewModel : DashboardViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
     onTransactionClick: (Transaction) -> Unit = {},
     onAddExpenseClick: () -> Unit = {}
 ) {
-    val transactions = listOf(
-        Transaction(
-            id = 1,
-            title = "Grocery Shopping",
-            category = "Shopping",
-            amount = 2500.0,
-            type = TransactionType.EXPENSE,
-            date = "15 Jan",
-            icon = Icons.Outlined.ShoppingBag
-        ),
-        Transaction(
-            id = 2,
-            title = "Salary Credited",
-            category = "Income",
-            amount = 50000.0,
-            type = TransactionType.INCOME,
-            date = "15 Jan",
-            icon = Icons.Outlined.TrendingUp
-        ),
-        Transaction(
-            id = 3,
-            title = "Coffee Shop",
-            category = "Food",
-            amount = 250.0,
-            type = TransactionType.EXPENSE,
-            date = "14 Jan",
-            icon = Icons.Outlined.LocalCafe
-        ),
-        Transaction(
-            id = 4,
-            title = "Rent Payment",
-            category = "Housing",
-            amount = 15000.0,
-            type = TransactionType.EXPENSE,
-            date = "14 Jan",
-            icon = Icons.Outlined.Home
-        )
-    )
 
-    val totalIncome = 50000.0
-    val totalExpense = 20750.0
+
+    val expenses by viewModel.expenses.collectAsState()
+    val loading by viewModel.loading.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadExpenses()
+    }
+
+    val transactions = expenses.mapIndexed { index, expense ->
+        expense.toTransaction(index)
+    }
+
+    val totalIncome = expenses
+        .filter { it.type == "INCOME" }
+        .sumOf { it.amount }
+
+    val totalExpense = expenses
+        .filter { it.type == "EXPENSE" }
+        .sumOf { it.amount }
+
     val balance = totalIncome - totalExpense
+
 
     Scaffold(
         topBar = {
@@ -93,7 +78,7 @@ fun DashboardScreen(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Outlined.Wallet,
+                            imageVector = Icons.Outlined.Book,
                             contentDescription = "TrackIt Logo",
                             tint = Color(0xFF14B8A6),
                             modifier = Modifier.size(32.dp)
@@ -142,172 +127,194 @@ fun DashboardScreen(
             }
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFFF9FAFB))
-                .padding(paddingValues),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Total Balance Card
-            item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.White
-                    ),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 1.dp
-                    )
+
+        when {
+            loading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            Text(
-                                text = "Total Balance",
-                                fontSize = 14.sp,
-                                color = Color(0xFF6B7280),
-                                fontWeight = FontWeight.Medium
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "₹${String.format("%,.0f", balance)}",
-                                fontSize = 32.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF1F2937)
-                            )
-                        }
-                        Box(
-                            modifier = Modifier
-                                .size(56.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFFCCFBF1)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Wallet,
-                                contentDescription = "Balance Icon",
-                                tint = Color(0xFF14B8A6),
-                                modifier = Modifier.size(28.dp)
-                            )
-                        }
-                    }
+                    CircularProgressIndicator()
                 }
             }
 
-            // Income and Expense Cards
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+            expenses.isEmpty() -> {
+                EmptyExpenseStateScreen(
+                    onAddExpenseClick = onAddExpenseClick
+                )
+            }
+
+            else -> {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0xFFF9FAFB))
+                        .padding(paddingValues),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Income Card
-                    Card(
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color(0xFFD1FAE5)
-                        )
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(20.dp)
+                    // Total Balance Card
+                    item {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.White
+                            ),
+                            elevation = CardDefaults.cardElevation(
+                                defaultElevation = 1.dp
+                            )
                         ) {
                             Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(20.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.ArrowCircleDown,
-                                    contentDescription = "Income",
-                                    tint = Color(0xFF059669),
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Text(
-                                    text = "Income",
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = Color(0xFF047857)
-                                )
+                                Column {
+                                    Text(
+                                        text = "Total Balance",
+                                        fontSize = 14.sp,
+                                        color = Color(0xFF6B7280),
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(
+                                        text = "₹${String.format("%,.0f", balance)}",
+                                        fontSize = 32.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFF1F2937)
+                                    )
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .size(56.dp)
+                                        .clip(CircleShape)
+                                        .background(Color(0xFFCCFBF1)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Book,
+                                        contentDescription = "Balance Icon",
+                                        tint = Color(0xFF14B8A6),
+                                        modifier = Modifier.size(28.dp)
+                                    )
+                                }
                             }
-                            Spacer(modifier = Modifier.height(12.dp))
-                            Text(
-                                text = "₹${String.format("%,.0f", totalIncome)}",
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF047857)
-                            )
                         }
                     }
 
-                    // Expense Card
-                    Card(
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color(0xFFFEE2E2)
-                        )
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(20.dp)
+                    // Income and Expense Cards
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            // Income Card
+                            Card(
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(16.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = Color(0xFFD1FAE5)
+                                )
                             ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.ArrowCircleUp,
-                                    contentDescription = "Expense",
-                                    tint = Color(0xFFDC2626),
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Text(
-                                    text = "Expense",
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = Color(0xFFDC2626)
-                                )
+                                Column(
+                                    modifier = Modifier.padding(20.dp)
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.ArrowCircleDown,
+                                            contentDescription = "Income",
+                                            tint = Color(0xFF059669),
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                        Text(
+                                            text = "Income",
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Medium,
+                                            color = Color(0xFF047857)
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    Text(
+                                        text = "₹${String.format("%,.0f", totalIncome)}",
+                                        fontSize = 24.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFF047857)
+                                    )
+                                }
                             }
-                            Spacer(modifier = Modifier.height(12.dp))
-                            Text(
-                                text = "₹${String.format("%,.0f", totalExpense)}",
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFFDC2626)
-                            )
+
+                            // Expense Card
+                            Card(
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(16.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = Color(0xFFFEE2E2)
+                                )
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(20.dp)
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.ArrowCircleUp,
+                                            contentDescription = "Expense",
+                                            tint = Color(0xFFDC2626),
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                        Text(
+                                            text = "Expense",
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Medium,
+                                            color = Color(0xFFDC2626)
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    Text(
+                                        text = "₹${String.format("%,.0f", totalExpense)}",
+                                        fontSize = 24.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFFDC2626)
+                                    )
+                                }
+                            }
                         }
+                    }
+
+                    // Recent Transactions Header
+                    item {
+                        Text(
+                            text = "Recent Transactions",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFF1F2937),
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
+
+                    // Transaction List
+                    items(transactions, key = { it.id }) { transaction: Transaction ->
+                        TransactionItem(
+                            transaction = transaction,
+                            onClick = { onTransactionClick(transaction) }
+                        )
+                    }
+
+                    // Bottom Spacing for FAB
+                    item {
+                        Spacer(modifier = Modifier.height(80.dp))
                     }
                 }
-            }
-
-            // Recent Transactions Header
-            item {
-                Text(
-                    text = "Recent Transactions",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF1F2937),
-                    modifier = Modifier.padding(top = 8.dp)
-                )
-            }
-
-            // Transaction List
-            items(transactions) { transaction ->
-                TransactionItem(
-                    transaction = transaction,
-                    onClick = { onTransactionClick(transaction) }
-                )
-            }
-
-            // Bottom Spacing for FAB
-            item {
-                Spacer(modifier = Modifier.height(80.dp))
             }
         }
     }
@@ -406,10 +413,21 @@ fun TransactionItem(
     }
 }
 
-// Preview
-@Composable
-fun DashboardScreenPreview() {
-    MaterialTheme {
-        DashboardScreen()
-    }
+
+private fun Expense.toTransaction(id: Int): Transaction {
+    return Transaction(
+        id = id,
+        title = title,
+        category = category,
+        amount = amount,
+        type = if (type == "INCOME")
+            TransactionType.INCOME
+        else
+            TransactionType.EXPENSE,
+        date = date,
+        icon = if (type == "INCOME")
+            Icons.Outlined.TrendingUp
+        else
+            Icons.Outlined.ShoppingBag
+    )
 }
