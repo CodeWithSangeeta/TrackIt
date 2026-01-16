@@ -183,13 +183,3 @@ fun LoginScreen(
         }
     }
 }
-
-// Preview
-@Composable
-fun LoginScreenPreview() {
-    MaterialTheme {
-        Surface {
-            LoginScreen()
-        }
-    }
-}
