@@ -408,11 +408,3 @@ fun EditExpenseScreen(
         )
     }
 }
-
-// Preview
-@Composable
-fun EditExpenseScreenPreview() {
-    MaterialTheme {
-        EditExpenseScreen()
-    }
-}

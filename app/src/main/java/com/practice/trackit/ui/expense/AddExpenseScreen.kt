@@ -1,6 +1,5 @@
 package com.practice.trackit.ui.expense
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -32,16 +31,38 @@ data class Category(
 @Composable
 fun AddExpenseScreen(
     type: String = "EXPENSE",
+    expenseId: String? = null,
     onBackClick: () -> Unit = {},
     onSaveSuccess: () -> Unit = {},
     viewModel: DashboardViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
 ) {
+    val isEdit = expenseId != null
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
     var amount by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf<Category?>(null) }
     var note by remember { mutableStateOf("") }
     var date by remember { mutableStateOf(SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date())) }
     var showCategoryDropdown by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
+
+    val expenses by viewModel.expenses.collectAsState()
+    val existingExpense = expenses.find { it.id == expenseId }
+
+    LaunchedEffect(Unit) {
+        if (expenseId != null) {
+            viewModel.loadExpenses()
+        }
+    }
+
+    LaunchedEffect(existingExpense) {
+        if (existingExpense != null) {
+            amount = existingExpense.amount.toString()
+            note = existingExpense.title
+            date = existingExpense.date
+            selectedCategory = Category("x", existingExpense.category)
+        }
+    }
 
     val categories = listOf(
         Category("food", "Food & Dining"),
@@ -106,7 +127,6 @@ fun AddExpenseScreen(
                 OutlinedTextField(
                     value = amount,
                     onValueChange = { newValue ->
-                        // Only allow numbers and decimal point
                         if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*$"))) {
                             amount = newValue
                         }
@@ -257,6 +277,7 @@ fun AddExpenseScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
+                       // .menuAnchor()
                         .clickable { showDatePicker = true },
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -273,25 +294,48 @@ fun AddExpenseScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            // Delete Button (Only in Edit Mode)
+            if (isEdit) {
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedButton(
+                    onClick = { showDeleteDialog = true },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Color(0xFFEF4444)
+                    )
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Outlined.Delete,
+                            contentDescription = "Delete",
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Delete Expense")
+                    }
+                }
+            }
 
-            println("Saving expense to Firestore")
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Save Button
             Button(
                 onClick = {
-                    println("👉 SAVE BUTTON CLICKED")
                     val amountValue = amount.toDoubleOrNull()
-                    if (amountValue == null || amountValue <= 0) {
-                        println("❌ INVALID AMOUNT")
-                        return@Button
-                    }
-
-                    if (selectedCategory == null) {
-                        println("❌ CATEGORY NOT SELECTED")
-                        return@Button
-                    }
-                    println("👉 CALLING viewModel.addExpense()")
+                    if (amountValue == null || amountValue <= 0) return@Button
+                    if (selectedCategory == null) return@Button
+                    if (isEdit && existingExpense != null) {
+                        viewModel.updateExpense(
+                            existingExpense.copy(
+                                amount = amountValue,
+                                category = selectedCategory!!.name,
+                                title = note,
+                                date = date
+                            ),
+                            onSuccess = onSaveSuccess
+                        )
+                    } else {
                         viewModel.addExpense(
                             amount = amountValue,
                             category = selectedCategory!!.name,
@@ -300,6 +344,7 @@ fun AddExpenseScreen(
                             type = type,
                             onSuccess = onSaveSuccess
                         )
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -327,7 +372,38 @@ fun AddExpenseScreen(
         }
     }
 
-
+    // Delete Confirmation Dialog
+    if (showDeleteDialog && existingExpense != null) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.deleteExpense(existingExpense.id) {
+                     //   showDeleteDialog = false
+                        onSaveSuccess()
+                    }
+                    showDeleteDialog = false
+                }) {
+                    Text("Delete", color = Color(0xFFEF4444))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel")
+                }
+            },
+            title = {
+                Text(
+                    text = "Delete Expense?",
+                    color = Color(0xFF1F2937),
+                    fontWeight = FontWeight.Medium
+                )
+            },
+            text = {
+                Text("This action cannot be undone.")
+            }
+        )
+    }
 
     // Date Picker Dialog
     if (showDatePicker) {
@@ -363,4 +439,3 @@ fun AddExpenseScreen(
         }
     }
 }
-

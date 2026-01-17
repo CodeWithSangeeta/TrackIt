@@ -62,6 +62,10 @@ dependencies {
     // Material icons dependency
     implementation("androidx.compose.material:material-icons-extended")
 
+    // Navigation
+    val nav_version = "2.9.3"
+    implementation("androidx.navigation:navigation-compose:$nav_version")
+
     // Firebase - Use platform() for BOM
     implementation(platform(libs.firebase.bom))
 

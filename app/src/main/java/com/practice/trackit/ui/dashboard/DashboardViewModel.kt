@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 class DashboardViewModel : ViewModel() {
 
     private val repository = ExpenseRepository()
+    private val auth = FirebaseAuth.getInstance()
 
     private val _expenses = MutableStateFlow<List<Expense>>(emptyList())
     val expenses: StateFlow<List<Expense>> = _expenses
@@ -19,9 +20,9 @@ class DashboardViewModel : ViewModel() {
     private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading
 
+    // READ
     fun loadExpenses() {
-        val user = FirebaseAuth.getInstance().currentUser ?: return
-
+        val user = auth.currentUser ?: return
         viewModelScope.launch {
             _loading.value = true
             _expenses.value = repository.getExpenses(user.uid)
@@ -29,24 +30,16 @@ class DashboardViewModel : ViewModel() {
         }
     }
 
-
+    // ADD
     fun addExpense(
         amount: Double,
         category: String,
         note: String,
         date: String,
-        type : String,
+        type: String,
         onSuccess: () -> Unit
     ) {
-        println("👉 addExpense() CALLED")
-
-        val user = FirebaseAuth.getInstance().currentUser
-        println("👉 CURRENT USER = $user")
-
-        if (user == null) {
-            println("❌ USER IS NULL — EXITING addExpense()")
-            return
-        }
+        val user = auth.currentUser ?: return
 
         val expense = Expense(
             title = note.ifEmpty { category },
@@ -58,30 +51,30 @@ class DashboardViewModel : ViewModel() {
         )
 
         viewModelScope.launch {
-            try {
-                _loading.value = true
-                repository.addExpense(expense)
-                println("✅ FIRESTORE WRITE SUCCESS")
-                loadExpenses()
-                onSuccess()
-            } catch (e: Exception) {
-                println("❌ FIRESTORE ERROR = ${e.message}")
-                e.printStackTrace()
-            } finally {
-                _loading.value = false
-            }
+            repository.addExpense(expense)
+            loadExpenses()
+            onSuccess()
         }
     }
 
+    // UPDATE
+    fun updateExpense(expense: Expense, onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            repository.updateExpense(expense)
+            loadExpenses()
+            onSuccess()
+        }
+    }
 
+    // DELETE
 
+    fun deleteExpense(id: String, onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            repository.deleteExpense(id)
+            loadExpenses()
+            onSuccess()
+        }
+    }
 }
-
-
-
-
-
-
-
 
 

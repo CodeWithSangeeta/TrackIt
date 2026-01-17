@@ -23,10 +23,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.practice.trackit.data.model.Expense
-import com.practice.trackit.ui.navigation.AppRoutes
 
 data class Transaction(
-    val id: Int,
+    val id: String,
     val title: String,
     val category: String,
     val amount: Double,
@@ -57,9 +56,10 @@ fun DashboardScreen(
         viewModel.loadExpenses()
     }
 
-    val transactions = expenses.mapIndexed { index, expense ->
-        expense.toTransaction(index)
+    val transactions = expenses.map { expense ->
+        expense.toTransaction()
     }
+
 
     val totalIncome = expenses
         .filter { it.type == "INCOME" }
@@ -309,9 +309,7 @@ fun DashboardScreen(
                     items(transactions, key = { it.id }) { transaction: Transaction ->
                         TransactionItem(
                             transaction = transaction,
-                            onClick = {  navController.navigate(
-                                "${AppRoutes.ADD_EXPENSE}?id=${transaction.id}"
-                            )}
+                            onClick = { onTransactionClick(transaction) }
                         )
                     }
 
@@ -419,7 +417,7 @@ fun TransactionItem(
 }
 
 
-private fun Expense.toTransaction(id: Int): Transaction {
+private fun Expense.toTransaction(): Transaction {
     return Transaction(
         id = id,
         title = title,

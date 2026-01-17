@@ -27,8 +27,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             TrackItTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-
-            AppNavGraph()
+                    AppNavGraph()
                 }
             }
         }
