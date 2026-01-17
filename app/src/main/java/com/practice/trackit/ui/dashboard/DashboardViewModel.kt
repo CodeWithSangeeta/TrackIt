@@ -20,9 +20,11 @@ class DashboardViewModel : ViewModel() {
     val loading: StateFlow<Boolean> = _loading
 
     fun loadExpenses() {
+        val user = FirebaseAuth.getInstance().currentUser ?: return
+
         viewModelScope.launch {
             _loading.value = true
-            _expenses.value = repository.getExpenses()
+            _expenses.value = repository.getExpenses(user.uid)
             _loading.value = false
         }
     }
@@ -33,27 +35,44 @@ class DashboardViewModel : ViewModel() {
         category: String,
         note: String,
         date: String,
+        type : String,
         onSuccess: () -> Unit
     ) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        println("👉 addExpense() CALLED")
+
+        val user = FirebaseAuth.getInstance().currentUser
+        println("👉 CURRENT USER = $user")
+
+        if (user == null) {
+            println("❌ USER IS NULL — EXITING addExpense()")
+            return
+        }
 
         val expense = Expense(
             title = note.ifEmpty { category },
             category = category,
             amount = amount,
-            type = "EXPENSE",
+            type = type,
             date = date,
-            userId = userId
+            userId = user.uid
         )
 
         viewModelScope.launch {
-            _loading.value = true
-            repository.addExpense(expense)
-            loadExpenses()   // refresh dashboard data
-            _loading.value = false
-            onSuccess()
+            try {
+                _loading.value = true
+                repository.addExpense(expense)
+                println("✅ FIRESTORE WRITE SUCCESS")
+                loadExpenses()
+                onSuccess()
+            } catch (e: Exception) {
+                println("❌ FIRESTORE ERROR = ${e.message}")
+                e.printStackTrace()
+            } finally {
+                _loading.value = false
+            }
         }
     }
+
 
 
 }

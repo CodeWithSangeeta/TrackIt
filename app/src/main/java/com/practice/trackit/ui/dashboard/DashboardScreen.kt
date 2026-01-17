@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.practice.trackit.data.model.Expense
+import com.practice.trackit.ui.navigation.AppRoutes
 
 data class Transaction(
     val id: Int,
@@ -34,9 +35,11 @@ data class Transaction(
     val icon: ImageVector
 )
 
+
 enum class TransactionType {
     INCOME, EXPENSE
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -306,7 +309,9 @@ fun DashboardScreen(
                     items(transactions, key = { it.id }) { transaction: Transaction ->
                         TransactionItem(
                             transaction = transaction,
-                            onClick = { onTransactionClick(transaction) }
+                            onClick = {  navController.navigate(
+                                "${AppRoutes.ADD_EXPENSE}?id=${transaction.id}"
+                            )}
                         )
                     }
 

@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -12,6 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.practice.trackit.ui.auth.LoginScreen
+import com.practice.trackit.ui.auth.SignupScreen
+import com.practice.trackit.ui.dashboard.DashboardScreen
+import com.practice.trackit.ui.expense.AddExpenseScreen
+import com.practice.trackit.ui.expense.EditExpenseScreen
+import com.practice.trackit.ui.navigation.AppNavGraph
 import com.practice.trackit.ui.theme.TrackItTheme
 
 class MainActivity : ComponentActivity() {
@@ -22,7 +28,7 @@ class MainActivity : ComponentActivity() {
             TrackItTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
-                    LoginScreen {  }
+            AppNavGraph()
                 }
             }
         }

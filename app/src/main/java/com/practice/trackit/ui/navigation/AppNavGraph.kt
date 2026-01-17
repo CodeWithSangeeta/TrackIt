@@ -2,9 +2,11 @@ package com.practice.trackit.ui.navigation
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.practice.trackit.ui.auth.LoginScreen
 import com.practice.trackit.ui.auth.SignupScreen
 import com.practice.trackit.ui.dashboard.DashboardScreen
@@ -20,7 +22,6 @@ fun AppNavGraph() {
         composable(route = AppRoutes.LOGIN) {
             LoginScreen(
                 onLoginSuccess = {
-                    Log.d("NAV", "Navigating to Dashboard")
                     navController.navigate(AppRoutes.DASHBOARD) {
                         popUpTo(AppRoutes.LOGIN) { inclusive = true }
                     }
@@ -60,14 +61,24 @@ fun AppNavGraph() {
             )
         }
 
-        composable(route = AppRoutes.ADD_EXPENSE) {
-            AddExpenseScreen(
-                onBackClick = { navController.popBackStack() },
-                onSaveSuccess = {
-                    navController.popBackStack()
+        composable(
+            route = "${AppRoutes.ADD_EXPENSE}?id={id}",
+            arguments = listOf(
+                navArgument("id") {
+                    type = NavType.StringType
+                    nullable = true
                 }
             )
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+
+            AddExpenseScreen(
+                //expenseId = id,
+                onBackClick = { navController.popBackStack() },
+                onSaveSuccess = { navController.popBackStack() }
+            )
         }
+
 
 
     })
