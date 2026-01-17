@@ -16,7 +16,7 @@ import com.practice.trackit.ui.auth.LoginScreen
 import com.practice.trackit.ui.auth.SignupScreen
 import com.practice.trackit.ui.dashboard.DashboardScreen
 import com.practice.trackit.ui.expense.AddExpenseScreen
-import com.practice.trackit.ui.expense.EditExpenseScreen
+
 import com.practice.trackit.ui.navigation.AppNavGraph
 import com.practice.trackit.ui.theme.TrackItTheme
 

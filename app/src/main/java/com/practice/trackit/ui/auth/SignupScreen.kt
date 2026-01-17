@@ -1,21 +1,26 @@
 package com.practice.trackit.ui.auth
 
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Book
 import androidx.compose.material.icons.outlined.ThumbUp
+import androidx.compose.material.icons.outlined.TrackChanges
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.practice.trackit.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,17 +42,13 @@ fun SignupScreen(
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(80.dp))
 
-        // Wallet Icon
-        Icon(
-            imageVector = Icons.Outlined.ThumbUp,
-            contentDescription = "Wallet Icon",
-            modifier = Modifier.size(64.dp),
-            tint = Color(0xFF14B8A6)
+        Spacer(modifier = Modifier.height(8.dp))
+        Image(
+            painter = painterResource(R.drawable.trackit_logo),
+            contentDescription = "TrackIt Logo",
+            modifier = Modifier.size(124.dp),
         )
-
-        Spacer(modifier = Modifier.height(32.dp))
 
         // Welcome Text
         Text(

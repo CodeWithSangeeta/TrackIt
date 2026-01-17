@@ -2,21 +2,46 @@ package com.practice.trackit.ui.navigation
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.firebase.auth.FirebaseAuth
 import com.practice.trackit.ui.auth.LoginScreen
 import com.practice.trackit.ui.auth.SignupScreen
+import com.practice.trackit.ui.auth.SplashScreen
 import com.practice.trackit.ui.dashboard.DashboardScreen
 import com.practice.trackit.ui.expense.AddExpenseScreen
+import kotlinx.coroutines.delay
 
 @Composable
 fun AppNavGraph() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = AppRoutes.LOGIN, builder ={
+    NavHost(navController = navController, startDestination = AppRoutes.SPLASH, builder ={
+
+
+        composable(AppRoutes.SPLASH) {
+            val auth = FirebaseAuth.getInstance()
+
+            LaunchedEffect(Unit) {
+                delay(1200) // optional smooth UX
+
+                if (auth.currentUser != null) {
+                    navController.navigate(AppRoutes.DASHBOARD) {
+                        popUpTo(AppRoutes.SPLASH) { inclusive = true }
+                    }
+                } else {
+                    navController.navigate(AppRoutes.LOGIN) {
+                        popUpTo(AppRoutes.SPLASH) { inclusive = true }
+                    }
+                }
+            }
+
+            SplashScreen()
+        }
 
         //Login Screen
         composable(route = AppRoutes.LOGIN) {
