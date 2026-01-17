@@ -15,6 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,7 +51,8 @@ enum class TransactionType {
 fun DashboardScreen(
     viewModel : DashboardViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
     onTransactionClick: (Transaction) -> Unit = {},
-    onAddExpenseClick: () -> Unit = {}
+    onAddExpenseClick: () -> Unit = {},
+    onAddIncomeClick: () -> Unit = {},
 ) {
 
 
@@ -74,63 +78,97 @@ fun DashboardScreen(
 
     val balance = totalIncome - totalExpense
 
+    var showAddMenu by remember { mutableStateOf(false) }
+
+    val showMainUi = !loading && expenses.isNotEmpty()
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.trackit_logo),
-                            contentDescription = "TrackIt Logo",
-                            modifier = Modifier.size(62.dp)
-                        )
-                        Text(
-                            text = "TrackIt",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                },
-                actions = {
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .background(Color(0xFFCCFBF1)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "U",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF14B8A6)
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onAddExpenseClick,
-                containerColor = Color(0xFF14B8A6),
-                contentColor = Color.White,
-                shape = CircleShape
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Add,
-                    contentDescription = "Add Expense",
-                    modifier = Modifier.size(28.dp)
+            if (showMainUi) {
+                TopAppBar(
+                    title = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.trackit_logo),
+                                contentDescription = "TrackIt Logo",
+                                modifier = Modifier.size(62.dp)
+                            )
+                            Text(
+                                text = "TrackIt",
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    },
+                    actions = {
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFFCCFBF1)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "U",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFF14B8A6)
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    )
                 )
             }
+        },
+
+
+
+        floatingActionButton = {
+            if (showMainUi) {
+                Box {
+                    FloatingActionButton(
+                        onClick = { showAddMenu = true },
+                        containerColor = Color(0xFF14B8A6),
+                        contentColor = Color.White,
+                        shape = CircleShape
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Add,
+                            contentDescription = "Add",
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+
+                    DropdownMenu(
+                        expanded = showAddMenu,
+                        onDismissRequest = { showAddMenu = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Add Expense") },
+                            onClick = {
+                                showAddMenu = false
+                                onAddExpenseClick()
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            text = { Text("Add Income") },
+                            onClick = {
+                                showAddMenu = false
+                                onAddIncomeClick()
+                            }
+                        )
+                    }
+                }
+            }
         }
+
     ) { paddingValues ->
 
         when {

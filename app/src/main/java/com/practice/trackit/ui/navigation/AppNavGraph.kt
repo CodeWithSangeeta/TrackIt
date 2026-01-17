@@ -74,28 +74,81 @@ fun AppNavGraph() {
         }
 
 
-        // Dashboard Screen
+//        // Dashboard Screen
+//        composable(route = AppRoutes.DASHBOARD) {
+//            // Dashboard
+//            DashboardScreen(
+//                onAddExpenseClick = {
+//                    navController.navigate(AppRoutes.ADD_TRANSACTION)
+//                },
+//                onTransactionClick = { transaction ->
+//                    navController.navigate(
+//                        "${AppRoutes.ADD_TRANSACTION}?expenseId=${transaction.id}"
+//                    )
+//                }
+//            )
+//
+//        }
+
         composable(route = AppRoutes.DASHBOARD) {
-            // Dashboard
             DashboardScreen(
+
+                // EXPENSE
                 onAddExpenseClick = {
-                    navController.navigate(AppRoutes.ADD_TRANSACTION)
+                    navController.navigate(
+                        "${AppRoutes.ADD_TRANSACTION}?type=EXPENSE"
+                    )
                 },
+
+                // INCOME ✅
+                onAddIncomeClick = {
+                    navController.navigate(
+                        "${AppRoutes.ADD_TRANSACTION}?type=INCOME"
+                    )
+                },
+
+                // EDIT
                 onTransactionClick = { transaction ->
                     navController.navigate(
-                        "${AppRoutes.ADD_TRANSACTION}?expenseId=${transaction.id}"
+                        "${AppRoutes.ADD_TRANSACTION}?type=${transaction.type.name}&expenseId=${transaction.id}"
                     )
                 }
             )
-
         }
 
 
 
-        // Add/Edit screen
+
+//        // Add/Edit screen
+//        composable(
+//            route = "${AppRoutes.ADD_TRANSACTION}?expenseId={expenseId}",
+//            arguments = listOf(
+//                navArgument("expenseId") {
+//                    type = NavType.StringType
+//                    nullable = true
+//                    defaultValue = null
+//                }
+//            )
+//        ) { backStackEntry ->
+//
+//            val expenseId = backStackEntry.arguments?.getString("expenseId")
+//
+//            AddExpenseScreen(
+//                expenseId = expenseId,
+//                onBackClick = { navController.popBackStack() },
+//                onSaveSuccess = { navController.popBackStack() }
+//            )
+//        }
+
+
+
         composable(
-            route = "${AppRoutes.ADD_TRANSACTION}?expenseId={expenseId}",
+            route = "${AppRoutes.ADD_TRANSACTION}?type={type}&expenseId={expenseId}",
             arguments = listOf(
+                navArgument("type") {
+                    type = NavType.StringType
+                    defaultValue = "EXPENSE"
+                },
                 navArgument("expenseId") {
                     type = NavType.StringType
                     nullable = true
@@ -104,15 +157,16 @@ fun AppNavGraph() {
             )
         ) { backStackEntry ->
 
+            val type = backStackEntry.arguments?.getString("type") ?: "EXPENSE"
             val expenseId = backStackEntry.arguments?.getString("expenseId")
 
             AddExpenseScreen(
+                type = type,
                 expenseId = expenseId,
                 onBackClick = { navController.popBackStack() },
                 onSaveSuccess = { navController.popBackStack() }
             )
         }
-
 
 
 

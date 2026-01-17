@@ -65,6 +65,13 @@ fun AddExpenseScreen(
     }
 
     val categories = listOf(
+        Category("salary", "Salary"),
+        Category("salary", "Salary"),
+        Category("freelance", "Freelance / Contract"),
+        Category("business", "Business"),
+        Category("investment", "Investment / Interest"),
+        Category("other_income", "Other Income"),
+        Category("gift", "Gifts"),
         Category("food", "Food & Dining"),
         Category("rent", "Rent & Housing"),
         Category("travel", "Travel & Transport"),
@@ -72,7 +79,7 @@ fun AddExpenseScreen(
         Category("entertainment", "Entertainment"),
         Category("utilities", "Utilities"),
         Category("healthcare", "Healthcare"),
-        Category("other", "Other")
+        Category("other_expense", "Other Expenses")
     )
 
     val datePickerState = rememberDatePickerState(
