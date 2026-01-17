@@ -87,7 +87,7 @@ fun AddExpenseScreen(
                         text = if (type == "INCOME") "Add Income" else "Add Expense",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1F2937)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 },
                 navigationIcon = {
@@ -95,12 +95,12 @@ fun AddExpenseScreen(
                         Icon(
                             imageVector = Icons.Outlined.ArrowBack,
                             contentDescription = "Back",
-                            tint = Color(0xFF374151)
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.surface
                 )
             )
         }
@@ -108,7 +108,7 @@ fun AddExpenseScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF9FAFB))
+                .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp, vertical = 24.dp),
@@ -120,7 +120,7 @@ fun AddExpenseScreen(
                     text = "Amount (₹)",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFF374151),
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
 
@@ -134,17 +134,16 @@ fun AddExpenseScreen(
                     placeholder = {
                         Text(
                             text = "0.00",
-                            color = Color(0xFFD1D5DB),
-                            fontSize = 18.sp
-                        )
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+
                     },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = Color(0xFFE5E7EB),
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                         focusedBorderColor = Color(0xFF14B8A6),
-                        unfocusedContainerColor = Color.White,
-                        focusedContainerColor = Color.White
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface
                     ),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal
@@ -160,7 +159,7 @@ fun AddExpenseScreen(
                     text = "Category",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFF374151),
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
 
@@ -175,14 +174,14 @@ fun AddExpenseScreen(
                         placeholder = {
                             Text(
                                 text = "Select category",
-                                color = Color(0xFF9CA3AF)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         },
                         trailingIcon = {
                             Icon(
                                 imageVector = Icons.Outlined.KeyboardArrowDown,
                                 contentDescription = "Dropdown",
-                                tint = Color(0xFF6B7280)
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         },
                         modifier = Modifier
@@ -190,10 +189,10 @@ fun AddExpenseScreen(
                             .menuAnchor(),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Color(0xFFE5E7EB),
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                             focusedBorderColor = Color(0xFF14B8A6),
-                            unfocusedContainerColor = Color.White,
-                            focusedContainerColor = Color.White
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            focusedContainerColor = MaterialTheme.colorScheme.surface
                         ),
                         singleLine = true
                     )
@@ -201,7 +200,7 @@ fun AddExpenseScreen(
                     ExposedDropdownMenu(
                         expanded = showCategoryDropdown,
                         onDismissRequest = { showCategoryDropdown = false },
-                        modifier = Modifier.background(Color.White)
+                        modifier = Modifier.background(MaterialTheme.colorScheme.surface)
                     ) {
                         categories.forEach { category ->
                             DropdownMenuItem(
@@ -209,7 +208,7 @@ fun AddExpenseScreen(
                                     Text(
                                         text = category.name,
                                         fontSize = 14.sp,
-                                        color = Color(0xFF374151)
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
                                 },
                                 onClick = {
@@ -228,8 +227,8 @@ fun AddExpenseScreen(
                     text = "Note (Optional)",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFF374151),
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    color = MaterialTheme.colorScheme.onBackground,
+                            modifier = Modifier.padding(bottom = 8.dp)
                 )
 
                 OutlinedTextField(
@@ -238,16 +237,16 @@ fun AddExpenseScreen(
                     placeholder = {
                         Text(
                             text = "Add a note...",
-                            color = Color(0xFFD1D5DB)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = Color(0xFFE5E7EB),
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                         focusedBorderColor = Color(0xFF14B8A6),
-                        unfocusedContainerColor = Color.White,
-                        focusedContainerColor = Color.White
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface
                     ),
                     singleLine = true
                 )
@@ -259,8 +258,8 @@ fun AddExpenseScreen(
                     text = "Date",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFF374151),
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    color = MaterialTheme.colorScheme.onBackground,
+                            modifier = Modifier.padding(bottom = 8.dp)
                 )
 
                 OutlinedTextField(
@@ -271,13 +270,13 @@ fun AddExpenseScreen(
                         Icon(
                             imageVector = Icons.Outlined.CalendarToday,
                             contentDescription = "Calendar",
-                            tint = Color(0xFF6B7280),
-                            modifier = Modifier.size(20.dp)
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(20.dp)
                         )
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                       // .menuAnchor()
+                       //.menuAnchor()
                         .clickable { showDatePicker = true },
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -285,9 +284,9 @@ fun AddExpenseScreen(
                         focusedBorderColor = Color(0xFF14B8A6),
                         unfocusedContainerColor = Color.White,
                         focusedContainerColor = Color.White,
-                        disabledBorderColor = Color(0xFFE5E7EB),
-                        disabledContainerColor = Color.White,
-                        disabledTextColor = Color(0xFF374151)
+                        disabledBorderColor = MaterialTheme.colorScheme.outline,
+                        disabledContainerColor = MaterialTheme.colorScheme.surface,
+                        disabledTextColor = MaterialTheme.colorScheme.onSurface
                     ),
                     enabled = false,
                     singleLine = true

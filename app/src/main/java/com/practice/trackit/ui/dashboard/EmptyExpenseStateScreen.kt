@@ -1,6 +1,7 @@
 package com.practice.trackit.ui.dashboard
 
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -14,10 +15,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.practice.trackit.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,17 +35,17 @@ fun EmptyExpenseStateScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Wallet,
+                        Image(
+                            painter = painterResource(R.drawable.trackit_logo),
                             contentDescription = "TrackIt Logo",
-                            tint = Color(0xFF14B8A6),
                             modifier = Modifier.size(32.dp)
                         )
+
                         Text(
-                            text = "TrackIt",
+                            text = "TrackItttttttttt",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1F2937)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
@@ -63,7 +66,7 @@ fun EmptyExpenseStateScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.surface
                 )
             )
         }
@@ -71,7 +74,7 @@ fun EmptyExpenseStateScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF9FAFB))
+                .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
@@ -82,7 +85,7 @@ fun EmptyExpenseStateScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                // Large Icon with Circle Background
+                // Icon Circle
                 Box(
                     modifier = Modifier
                         .size(160.dp)
@@ -100,12 +103,12 @@ fun EmptyExpenseStateScreen(
 
                 Spacer(modifier = Modifier.height(40.dp))
 
-                // Main Title
+                // Title
                 Text(
                     text = "No expenses yet",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1F2937),
+                    color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center
                 )
 
@@ -115,7 +118,7 @@ fun EmptyExpenseStateScreen(
                 Text(
                     text = "Start tracking your expenses by adding your first transaction",
                     fontSize = 16.sp,
-                    color = Color(0xFF6B7280),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                     lineHeight = 24.sp,
                     modifier = Modifier.padding(horizontal = 16.dp)
@@ -123,7 +126,7 @@ fun EmptyExpenseStateScreen(
 
                 Spacer(modifier = Modifier.height(40.dp))
 
-                // Add First Expense Button
+                // Button (unchanged brand color)
                 Button(
                     onClick = onAddExpenseClick,
                     modifier = Modifier

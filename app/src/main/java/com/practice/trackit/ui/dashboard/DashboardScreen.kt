@@ -1,5 +1,6 @@
 package com.practice.trackit.ui.dashboard
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,9 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.practice.trackit.R
 import com.practice.trackit.data.model.Expense
 
 data class Transaction(
@@ -80,17 +83,16 @@ fun DashboardScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Book,
+                        Image(
+                            painter = painterResource(R.drawable.trackit_logo),
                             contentDescription = "TrackIt Logo",
-                            tint = Color(0xFF14B8A6),
-                            modifier = Modifier.size(32.dp)
+                            modifier = Modifier.size(62.dp)
                         )
                         Text(
                             text = "TrackIt",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1F2937)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
@@ -111,7 +113,7 @@ fun DashboardScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.surface
                 )
             )
         },
@@ -153,7 +155,8 @@ fun DashboardScreen(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color(0xFFF9FAFB))
+                        .background(MaterialTheme.colorScheme.background)
+
                         .padding(paddingValues),
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -164,7 +167,7 @@ fun DashboardScreen(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
                             colors = CardDefaults.cardColors(
-                                containerColor = Color.White
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant
                             ),
                             elevation = CardDefaults.cardElevation(
                                 defaultElevation = 1.dp
@@ -181,7 +184,7 @@ fun DashboardScreen(
                                     Text(
                                         text = "Total Balance",
                                         fontSize = 14.sp,
-                                        color = Color(0xFF6B7280),
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontWeight = FontWeight.Medium
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
@@ -189,7 +192,7 @@ fun DashboardScreen(
                                         text = "₹${String.format("%,.0f", balance)}",
                                         fontSize = 32.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF1F2937)
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
                                 Box(
@@ -200,7 +203,7 @@ fun DashboardScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Outlined.Book,
+                                        imageVector = Icons.Outlined.Wallet,
                                         contentDescription = "Balance Icon",
                                         tint = Color(0xFF14B8A6),
                                         modifier = Modifier.size(28.dp)
@@ -300,7 +303,7 @@ fun DashboardScreen(
                             text = "Recent Transactions",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF1F2937),
+                            color = MaterialTheme.colorScheme.surface,
                             modifier = Modifier.padding(top = 8.dp)
                         )
                     }
@@ -334,7 +337,7 @@ fun TransactionItem(
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 1.dp
@@ -360,7 +363,8 @@ fun TransactionItem(
                             if (transaction.type == TransactionType.INCOME)
                                 Color(0xFFD1FAE5)
                             else
-                                Color(0xFFF3F4F6)
+                                 Color(0xFFFEE2E2)
+
                         ),
                     contentAlignment = Alignment.Center
                 ) {
@@ -370,8 +374,8 @@ fun TransactionItem(
                         tint = if (transaction.type == TransactionType.INCOME)
                             Color(0xFF059669)
                         else
-                            Color(0xFF6B7280),
-                        modifier = Modifier.size(24.dp)
+
+                        Color(0xFFDC2626)
                     )
                 }
 
@@ -381,13 +385,13 @@ fun TransactionItem(
                         text = transaction.title,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color(0xFF1F2937)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = transaction.category,
                         fontSize = 13.sp,
-                        color = Color(0xFF6B7280)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -409,7 +413,7 @@ fun TransactionItem(
                 Text(
                     text = transaction.date,
                     fontSize = 12.sp,
-                    color = Color(0xFF9CA3AF)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }

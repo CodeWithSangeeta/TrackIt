@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.practice.trackit.R
+import com.practice.trackit.component.GoogleButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,7 +56,7 @@ fun SignupScreen(
             text = "Create Account",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF1F2937),
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center
         )
 
@@ -65,11 +66,11 @@ fun SignupScreen(
         Text(
             text = "Start tracking your expenses",
             fontSize = 16.sp,
-            color = Color(0xFF6B7280),
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         // Email Field
         Column(
@@ -79,7 +80,7 @@ fun SignupScreen(
                 text = "Email",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF374151),
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
@@ -89,16 +90,16 @@ fun SignupScreen(
                 placeholder = {
                     Text(
                         text = "Enter your email",
-                        color = Color(0xFFD1D5DB)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color(0xFFE5E7EB),
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                     focusedBorderColor = Color(0xFF14B8A6),
-                    unfocusedContainerColor = Color(0xFFFAFAFA),
-                    focusedContainerColor = Color.White
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface
                 ),
                 singleLine = true
             )
@@ -114,7 +115,7 @@ fun SignupScreen(
                 text = "Password",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF374151),
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
@@ -124,16 +125,16 @@ fun SignupScreen(
                 placeholder = {
                     Text(
                         text = "Create a password",
-                        color = Color(0xFFD1D5DB)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color(0xFFE5E7EB),
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                     focusedBorderColor = Color(0xFF14B8A6),
-                    unfocusedContainerColor = Color(0xFFFAFAFA),
-                    focusedContainerColor = Color.White
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface
                 ),
                 visualTransformation = PasswordVisualTransformation(),
                 singleLine = true
@@ -149,7 +150,7 @@ fun SignupScreen(
                 text = "Confirm Password",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF374151),
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
@@ -159,29 +160,29 @@ fun SignupScreen(
                 placeholder = {
                     Text(
                         text = "Re-enter your password",
-                        color = Color(0xFFD1D5DB)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color(0xFFE5E7EB),
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                     focusedBorderColor = Color(0xFF14B8A6),
-                    unfocusedContainerColor = Color(0xFFFAFAFA),
-                    focusedContainerColor = Color.White
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface
                 ),
                 visualTransformation = PasswordVisualTransformation(),
                 singleLine = true
             )
         }
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(18.dp))
 
         error?.let {
             Spacer(Modifier.height(12.dp))
             Text(it, color = MaterialTheme.colorScheme.error)
         }
-        // Login Button
+        // Register Button
         Button(
             onClick = { viewModel.signup(email, password, onSignupSuccess) },
             enabled = !loading,
@@ -212,7 +213,18 @@ fun SignupScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(18.dp))
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Divider(modifier = Modifier.weight(1f))
+            Text("Or Continue with", modifier = Modifier.padding(horizontal = 12.dp))
+            Divider(modifier = Modifier.weight(1f))
+        }
+        Spacer(modifier = Modifier.height(18.dp))
+
+        GoogleButton{}
+
+        Spacer(modifier = Modifier.height(18.dp))
 
         // Sign Up Link
         Row(
@@ -222,7 +234,7 @@ fun SignupScreen(
             Text(
                 text = "Already have an account? ",
                 fontSize = 14.sp,
-                color = Color(0xFF6B7280)
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
             )
             TextButton(
                 onClick = onLoginClick,
