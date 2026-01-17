@@ -9,18 +9,20 @@ class ExpenseRepository {
 
     private val db = FirebaseFirestore.getInstance()
 
-    suspend fun getExpenses(): List<Expense> {
-        return db.collection("expenses")
-            .whereEqualTo("userId", "demo_user")
-            .get()
-            .await()
-            .toObjects(Expense::class.java)
-    }
-
-    // ✅ ADD THIS FUNCTION
     suspend fun addExpense(expense: Expense) {
+        println("👉 REPOSITORY addExpense() CALLED")
         db.collection("expenses")
             .add(expense)
             .await()
     }
+
+    suspend fun getExpenses(userId: String): List<Expense> {
+        println("👉 FETCHING expenses for userId = $userId")
+        return db.collection("expenses")
+            .whereEqualTo("userId", userId)
+            .get()
+            .await()
+            .toObjects(Expense::class.java)
+    }
 }
+

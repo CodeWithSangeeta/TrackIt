@@ -31,6 +31,7 @@ data class Category(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddExpenseScreen(
+    type: String = "EXPENSE",
     onBackClick: () -> Unit = {},
     onSaveSuccess: () -> Unit = {},
     viewModel: DashboardViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
@@ -62,7 +63,7 @@ fun AddExpenseScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Add Expense",
+                        text = if (type == "INCOME") "Add Income" else "Add Expense",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF1F2937)
@@ -279,13 +280,24 @@ fun AddExpenseScreen(
             // Save Button
             Button(
                 onClick = {
-                    val amountValue = amount.toDoubleOrNull() ?: return@Button
-                    if (amountValue > 0 && selectedCategory != null)  return@Button
+                    println("👉 SAVE BUTTON CLICKED")
+                    val amountValue = amount.toDoubleOrNull()
+                    if (amountValue == null || amountValue <= 0) {
+                        println("❌ INVALID AMOUNT")
+                        return@Button
+                    }
+
+                    if (selectedCategory == null) {
+                        println("❌ CATEGORY NOT SELECTED")
+                        return@Button
+                    }
+                    println("👉 CALLING viewModel.addExpense()")
                         viewModel.addExpense(
                             amount = amountValue,
                             category = selectedCategory!!.name,
                             note = note,
                             date = date,
+                            type = type,
                             onSuccess = onSaveSuccess
                         )
                 },
@@ -314,7 +326,7 @@ fun AddExpenseScreen(
             }
         }
     }
-    println("Expense saved successfully")
+
 
 
     // Date Picker Dialog
