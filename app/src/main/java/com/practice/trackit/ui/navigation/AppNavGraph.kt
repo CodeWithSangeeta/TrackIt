@@ -74,22 +74,6 @@ fun AppNavGraph() {
         }
 
 
-//        // Dashboard Screen
-//        composable(route = AppRoutes.DASHBOARD) {
-//            // Dashboard
-//            DashboardScreen(
-//                onAddExpenseClick = {
-//                    navController.navigate(AppRoutes.ADD_TRANSACTION)
-//                },
-//                onTransactionClick = { transaction ->
-//                    navController.navigate(
-//                        "${AppRoutes.ADD_TRANSACTION}?expenseId=${transaction.id}"
-//                    )
-//                }
-//            )
-//
-//        }
-
         composable(route = AppRoutes.DASHBOARD) {
             DashboardScreen(
 
@@ -115,31 +99,6 @@ fun AppNavGraph() {
                 }
             )
         }
-
-
-
-
-//        // Add/Edit screen
-//        composable(
-//            route = "${AppRoutes.ADD_TRANSACTION}?expenseId={expenseId}",
-//            arguments = listOf(
-//                navArgument("expenseId") {
-//                    type = NavType.StringType
-//                    nullable = true
-//                    defaultValue = null
-//                }
-//            )
-//        ) { backStackEntry ->
-//
-//            val expenseId = backStackEntry.arguments?.getString("expenseId")
-//
-//            AddExpenseScreen(
-//                expenseId = expenseId,
-//                onBackClick = { navController.popBackStack() },
-//                onSaveSuccess = { navController.popBackStack() }
-//            )
-//        }
-
 
 
         composable(

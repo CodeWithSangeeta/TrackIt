@@ -72,6 +72,7 @@ dependencies {
     //  Firebase Authentication (Email/Password)
     implementation(libs.firebase.auth)
 
+
     // Firestore Database
     implementation(libs.firebase.firestore)
 }
