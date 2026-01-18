@@ -25,7 +25,7 @@ import com.practice.trackit.R
 fun GoogleButton(onClick:() -> Unit) {
 
     OutlinedButton(
-        onClick = {},
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp),

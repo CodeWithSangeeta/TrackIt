@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 
     // Add the Google services Gradle plugin
-    alias(libs.plugins.google.services)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -75,4 +75,8 @@ dependencies {
 
     // Firestore Database
     implementation(libs.firebase.firestore)
+
+
+    //Firebase Authentication (Google Sign In)
+    implementation(libs.play.services.auth)
 }
