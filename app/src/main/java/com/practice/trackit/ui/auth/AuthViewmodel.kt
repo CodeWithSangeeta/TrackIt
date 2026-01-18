@@ -1,67 +1,96 @@
 package com.practice.trackit.ui.auth
 
-
-import android.app.Activity
-import android.util.Log
-import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalContext
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.practice.trackit.data.repository.AuthRepository
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+
+
+
+
 
 class AuthViewModel : ViewModel() {
 
-    private val repository = AuthRepository()
+    private val auth = FirebaseAuth.getInstance()
 
-    private val _loading = MutableStateFlow(false)
-    val loading: StateFlow<Boolean> = _loading
+    private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
+    val authState: StateFlow<AuthState> = _authState
 
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
+     var googleSignInClient: GoogleSignInClient? = null
+        private set
 
-    fun login(
-        email: String,
-        password: String,
-        onSuccess: () -> Unit
-    ) {
-        viewModelScope.launch {
-            _loading.value = true
-            val result = repository.login(email, password)
-            _loading.value = false
-
-            result.onSuccess {
-                _error.value = null
-                onSuccess()
-            }.onFailure {
-                _error.value = it.message
-            }
+    // Email login
+    fun login(email: String, password: String) {
+        if (email.isBlank() || password.isBlank()) {
+            _authState.value = AuthState.Error("Email and password cannot be empty")
+            return
         }
+
+        _authState.value = AuthState.Loading
+
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                _authState.value = AuthState.Authenticated
+            }
+            .addOnFailureListener {
+                _authState.value = AuthState.Error(it.message ?: "Login failed")
+            }
     }
 
-    fun signup(
-        email: String,
-        password: String,
-        onSuccess: () -> Unit
-    ) {
-        viewModelScope.launch {
-            _loading.value = true
-            val result = repository.signup(email, password)
-            _loading.value = false
-
-            result.onSuccess {
-                _error.value = null
-                onSuccess()
-            }.onFailure {
-                _error.value = it.message
-            }
+    // Email signup
+    fun signup(email: String, password: String) {
+        if (email.isBlank() || password.isBlank()) {
+            _authState.value = AuthState.Error("Email and password cannot be empty")
+            return
         }
+
+        _authState.value = AuthState.Loading
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                _authState.value = AuthState.Authenticated
+            }
+            .addOnFailureListener {
+                _authState.value = AuthState.Error(it.message ?: "Signup failed")
+            }
     }
 
+    // Init Google client (NO Compose here)
+    fun initGoogleSignIn(context: Context, webClientId: String) {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(webClientId)
+            .requestEmail()
+            .build()
+
+        googleSignInClient = GoogleSignIn.getClient(context, gso)
+    }
+
+
+    // Firebase Google login
+    fun loginWithGoogle(idToken: String) {
+        _authState.value = AuthState.Loading
+
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnSuccessListener {
+                _authState.value = AuthState.Authenticated
+            }
+            .addOnFailureListener {
+                _authState.value =
+                    AuthState.Error(it.message ?: "Google Sign-In failed")
+            }
+    }
+
+    fun signOut() {
+        auth.signOut()
+        _authState.value = AuthState.Idle
+    }
 }
+

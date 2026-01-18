@@ -147,7 +147,7 @@ fun AddExpenseScreen(
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                        focusedBorderColor = Color(0xFF14B8A6),
+                        focusedBorderColor = Color(0xFF0A6624),
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                         focusedContainerColor = MaterialTheme.colorScheme.surface
                     ),
@@ -196,7 +196,7 @@ fun AddExpenseScreen(
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                            focusedBorderColor = Color(0xFF14B8A6),
+                            focusedBorderColor = Color(0xFF0A6624),
                             unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                             focusedContainerColor = MaterialTheme.colorScheme.surface
                         ),
@@ -250,7 +250,7 @@ fun AddExpenseScreen(
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                        focusedBorderColor = Color(0xFF14B8A6),
+                        focusedBorderColor = Color(0xFF0A6624),
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                         focusedContainerColor = MaterialTheme.colorScheme.surface
                     ),
@@ -287,7 +287,7 @@ fun AddExpenseScreen(
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedBorderColor = Color(0xFFE5E7EB),
-                        focusedBorderColor = Color(0xFF14B8A6),
+                        focusedBorderColor = Color(0xFF0A6624),
                         unfocusedContainerColor = Color.White,
                         focusedContainerColor = Color.White,
                         disabledBorderColor = MaterialTheme.colorScheme.outline,
@@ -356,7 +356,7 @@ fun AddExpenseScreen(
                     .height(56.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF14B8A6),
+                    containerColor = Color(0xFF0A6624),
                     disabledContainerColor = Color(0xFFD1D5DB)
                 ),
                 enabled = amount.isNotEmpty() && amount.toDoubleOrNull() != null &&
@@ -424,7 +424,7 @@ fun AddExpenseScreen(
                         showDatePicker = false
                     }
                 ) {
-                    Text("OK", color = Color(0xFF14B8A6))
+                    Text("OK", color = Color(0xFF0A6624))
                 }
             },
             dismissButton = {
@@ -436,9 +436,9 @@ fun AddExpenseScreen(
             DatePicker(
                 state = datePickerState,
                 colors = DatePickerDefaults.colors(
-                    selectedDayContainerColor = Color(0xFF14B8A6),
-                    todayContentColor = Color(0xFF14B8A6),
-                    todayDateBorderColor = Color(0xFF14B8A6)
+                    selectedDayContainerColor = Color(0xFF0A6624),
+                    todayContentColor = Color(0xFF0A6624),
+                    todayDateBorderColor = Color(0xFF0A6624)
                 )
             )
         }

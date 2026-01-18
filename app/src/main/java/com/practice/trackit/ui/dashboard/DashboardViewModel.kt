@@ -7,6 +7,7 @@ import com.practice.trackit.data.model.Expense
 import com.practice.trackit.data.repository.ExpenseRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 class DashboardViewModel : ViewModel() {
@@ -19,6 +20,7 @@ class DashboardViewModel : ViewModel() {
 
     private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading
+
 
     // READ
     fun loadExpenses() {

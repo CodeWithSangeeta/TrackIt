@@ -27,8 +27,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.practice.trackit.R
 import com.practice.trackit.data.model.Expense
+import com.practice.trackit.ui.auth.AuthViewModel
+import com.practice.trackit.ui.navigation.AppRoutes
 
 data class Transaction(
     val id: String,
@@ -49,6 +52,8 @@ enum class TransactionType {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
+    authViewModel: AuthViewModel,
+    navController : NavController,
     viewModel : DashboardViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
     onTransactionClick: (Transaction) -> Unit = {},
     onAddExpenseClick: () -> Unit = {},
@@ -81,6 +86,7 @@ fun DashboardScreen(
     var showAddMenu by remember { mutableStateOf(false) }
 
     val showMainUi = !loading && expenses.isNotEmpty()
+    var showMenu by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -109,16 +115,35 @@ fun DashboardScreen(
                             modifier = Modifier
                                 .size(48.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFFCCFBF1)),
+                                .background(Color(0xFFCCFBF1))
+                                .clickable { showMenu = true },
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = "U",
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color(0xFF14B8A6)
+                                color = Color(0xFF0A6624)
                             )
                         }
+
+                        // Dropdown Menu
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Logout") },
+                                onClick = {
+                                    showMenu = false
+                                    authViewModel.signOut()
+                                    navController.navigate(AppRoutes.LOGIN) {
+                                        popUpTo(0) { inclusive = true }
+                                    }
+                                }
+                            )
+                        }
+
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surface
@@ -134,7 +159,7 @@ fun DashboardScreen(
                 Box {
                     FloatingActionButton(
                         onClick = { showAddMenu = true },
-                        containerColor = Color(0xFF14B8A6),
+                        containerColor = Color(0xFF0A6624),
                         contentColor = Color.White,
                         shape = CircleShape
                     ) {
@@ -332,6 +357,7 @@ fun DashboardScreen(
                                     )
                                 }
                             }
+
                         }
                     }
 
