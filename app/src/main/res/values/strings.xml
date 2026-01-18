@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TrackIt</string>
+    <string name="default_web_client_id">801134457483-9cqm6t46svlf1uqho9v5ej4gdehkg0jg.apps.googleusercontent.com</string>
 </resources>

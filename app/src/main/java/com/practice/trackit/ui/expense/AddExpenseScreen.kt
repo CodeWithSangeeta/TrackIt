@@ -66,7 +66,6 @@ fun AddExpenseScreen(
 
     val categories = listOf(
         Category("salary", "Salary"),
-        Category("salary", "Salary"),
         Category("freelance", "Freelance / Contract"),
         Category("business", "Business"),
         Category("investment", "Investment / Interest"),
@@ -369,7 +368,7 @@ fun AddExpenseScreen(
                 )
             ) {
                 Text(
-                    text = "Save Expense",
+                    text = "Save",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White

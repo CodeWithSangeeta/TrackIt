@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.firebase.auth.FirebaseAuth
+import com.practice.trackit.ui.auth.AuthViewModel
 import com.practice.trackit.ui.auth.LoginScreen
 import com.practice.trackit.ui.auth.SignupScreen
 import com.practice.trackit.ui.auth.SplashScreen
@@ -43,14 +44,10 @@ fun AppNavGraph() {
             SplashScreen()
         }
 
-        //Login Screen
+
         composable(route = AppRoutes.LOGIN) {
             LoginScreen(
-                onLoginSuccess = {
-                    navController.navigate(AppRoutes.DASHBOARD) {
-                        popUpTo(AppRoutes.LOGIN) { inclusive = true }
-                    }
-                },
+                navController = navController,
                 onSignUpClick = {
                     navController.navigate(AppRoutes.SIGNUP)
                 }
@@ -58,15 +55,10 @@ fun AppNavGraph() {
         }
 
 
-        // Signup Screen
+
         composable(route = AppRoutes.SIGNUP) {
             SignupScreen(
-                onSignupSuccess = {
-                    Log.d("NAV", "Navigating to Dashboard")
-                    navController.navigate(AppRoutes.DASHBOARD) {
-                        popUpTo(AppRoutes.SIGNUP) { inclusive = true }
-                    }
-                },
+                navController = navController,
                 onLoginClick = {
                     navController.popBackStack()
                 }
@@ -74,24 +66,33 @@ fun AppNavGraph() {
         }
 
 
-        composable(route = AppRoutes.DASHBOARD) {
-            DashboardScreen(
 
-                // EXPENSE
+        composable(route = AppRoutes.DASHBOARD) {
+
+            // ✅ Declare ViewModel FIRST
+            val authViewModel: AuthViewModel =
+                androidx.lifecycle.viewmodel.compose.viewModel()
+
+            // ✅ Call DashboardScreen ONCE
+            DashboardScreen(
+                navController = navController,
+                authViewModel =  authViewModel,
+
+                // ADD EXPENSE
                 onAddExpenseClick = {
                     navController.navigate(
                         "${AppRoutes.ADD_TRANSACTION}?type=EXPENSE"
                     )
                 },
 
-                // INCOME ✅
+                // ADD INCOME
                 onAddIncomeClick = {
                     navController.navigate(
                         "${AppRoutes.ADD_TRANSACTION}?type=INCOME"
                     )
                 },
 
-                // EDIT
+                // EDIT TRANSACTION
                 onTransactionClick = { transaction ->
                     navController.navigate(
                         "${AppRoutes.ADD_TRANSACTION}?type=${transaction.type.name}&expenseId=${transaction.id}"
@@ -99,6 +100,7 @@ fun AppNavGraph() {
                 }
             )
         }
+
 
 
         composable(
