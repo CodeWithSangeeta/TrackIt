@@ -77,7 +77,7 @@ This project was built as a **resume-grade / internship assignment project**, fo
 
 📺 Watch TrackIt in action:
 
-▶️ **[Click here to watch the demo video](https://drive.google.com/file/d/1p3tQ-U9pYO5KnFQruKq0geJYKnZE8znC/view?usp=drive_link)**
+▶️ **[Click here to watch the demo video](https://drive.google.com/file/d/1NVwmeDCjHrqF4N1e3P36UUDvTVamr4PZ/view?usp=sharing)**
 
 **Demo includes:**
 - App launch & authentication flow
