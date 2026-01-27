@@ -77,7 +77,7 @@ This project was built as a **resume-grade / internship assignment project**, fo
 
 📺 Watch TrackIt in action:
 
-▶️ **[Click here to watch the demo video](YOUR_VIDEO_LINK)**
+▶️ **[Click here to watch the demo video](https://drive.google.com/file/d/1p3tQ-U9pYO5KnFQruKq0geJYKnZE8znC/view?usp=drive_link)**
 
 **Demo includes:**
 - App launch & authentication flow
@@ -104,10 +104,73 @@ This project was built as a **resume-grade / internship assignment project**, fo
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ Architecture & Project Structure
 
-The app follows **MVVM (Model–View–ViewModel)** architecture with unidirectional data flow:
+TrackIt follows **Clean MVVM architecture** with a clear separation between UI, data, and navigation layers.
+The structure is designed to be **scalable, testable, and easy to maintain**.
 
+```text
+TrackIt/
+├── app/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── kotlin/
+│   │   │   │   └── com/
+│   │   │   │       └── practice/
+│   │   │   │           └── trackit/
+│   │   │   │
+│   │   │   │               ├── component/
+│   │   │   │               │   └── GoogleButton.kt
+│   │   │   │
+│   │   │   │               ├── data/
+│   │   │   │               │   ├── model/
+│   │   │   │               │   │   └── Expense.kt
+│   │   │   │               │   └── repository/
+│   │   │   │               │       └── ExpenseRepository.kt
+│   │   │   │
+│   │   │   │               ├── ui/
+│   │   │   │               │   ├── auth/
+│   │   │   │               │   │   ├── AuthState.kt
+│   │   │   │               │   │   ├── AuthViewModel.kt
+│   │   │   │               │   │   ├── LoginScreen.kt
+│   │   │   │               │   │   ├── SignupScreen.kt
+│   │   │   │               │   │   └── SplashScreen.kt
+│   │   │   │               │   │
+│   │   │   │               │   ├── dashboard/
+│   │   │   │               │   │   ├── DashboardScreen.kt
+│   │   │   │               │   │   ├── DashboardViewModel.kt
+│   │   │   │               │   │   └── EmptyExpenseStateScreen.kt
+│   │   │   │               │   │
+│   │   │   │               │   ├── expense/
+│   │   │   │               │   │   └── AddExpenseScreen.kt
+│   │   │   │               │   │
+│   │   │   │               │   ├── navigation/
+│   │   │   │               │   │   ├── AppNavGraph.kt
+│   │   │   │               │   │   └── AppRoutes.kt
+│   │   │   │               │   │
+│   │   │   │               │   └── theme/
+│   │   │   │               │       ├── Color.kt
+│   │   │   │               │       ├── Theme.kt
+│   │   │   │               │       └── Type.kt
+│   │   │   │
+│   │   │   │               └── MainActivity.kt
+│   │   │   │
+│   │   │   ├── res/
+│   │   │   └── AndroidManifest.xml
+│   │   │
+│   │   ├── androidTest/
+│   │   └── test/
+│   │
+│   ├── build.gradle.kts
+│   └── proguard-rules.pro
+│
+├── gradle/
+├── gradle.properties
+├── gradle-wrapper.properties
+├── settings.gradle.kts
+├── libs.versions.toml
+└── local.properties
+```
 
 
 ### Key Benefits
@@ -148,7 +211,7 @@ The app follows **MVVM (Model–View–ViewModel)** architecture with unidirecti
 ## 🚀 How to Run the Project
 
 ```bash
-git clone https://github.com/your-username/trackit.git
+git clone https://github.com/CodeWithSangeeta/TrackIt
 cd trackit
 
 
